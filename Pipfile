@@ -8,6 +8,8 @@ fastapi = "*"
 uvicorn = "*"
 tortoise-orm = "*"
 pydantic = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
 
 [dev-packages]
 
