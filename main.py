@@ -1,12 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException, status
 from tortoise.contrib.fastapi import register_tortoise
 from models import *
-from auth import CryptContext, pwd_context, get_hashed_password
+from auth import CryptContext, pwd_context, get_hashed_password, verify_token
 
 # Signals
 from tortoise.signals import post_save
 from typing import List, Optional, Type
 from tortoise import BaseDBAsyncClient
+
+# Response classes
+from fastapi.responses import HTMLResponse
+
+# Templates
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
@@ -19,14 +25,14 @@ async def create_business(
         using_db: "Optional[BaseDBAsyncClient]",
         update_fields: List[str]
 ) -> None:
-
     if created:
         business_obj = await Business.create(
             business_name=instance.username,
             owner=instance
         )
         await business_pydantic.from_tortoise_orm(business_obj)
-        # Send the email
+        # TODO: Send the email
+
 
 @app.post("/registration")
 async def user_registrations(user: user_pydanticIn):
@@ -37,8 +43,30 @@ async def user_registrations(user: user_pydanticIn):
     return {
         "status": "ok",
         "data": f"Hello {new_user.username} , thanks for choosing our services. Please check your email inbox and "
-                f"click on the link to conirm your registration."
+                f"click on the link to confirm your registration."
     }
+
+
+templates = Jinja2Templates(directory="templates")
+@app.get("/verification")
+async def email_verification(request: Request, token: str):
+    user = await verify_token(token)
+
+    if user and not user.is_verified:
+        user.is_verified = True
+        await user.save()
+        return templates.TemplateResponse(
+            "verification.html",
+            {
+                request: Request,
+                "user": User.username
+             })
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid token or expired token",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @app.get("/")
