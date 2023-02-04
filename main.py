@@ -46,7 +46,6 @@ async def get_current_user(token: str = Depends(oauth2_schema)):
     try:
         payload = jwt.decode(token, config_credentials["SECRET"], algorithms=["HS256"])
         user = await User.get(id=payload.get("id"))
-
     except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -149,7 +148,6 @@ async def create_profile_file(
     token_name = f"{secrets.token_hex(10)}.{extension}"
     generated_name = f"./static/images/{token_name}"
     file_content = await file.read()
-
     with open(generated_name, "wb") as file:
         file.write(file_content)
 
@@ -162,6 +160,9 @@ async def create_profile_file(
 
     business = await Business.get(owner=user)
     owner = await business.owner
+
+    print(f"User ID: {user.id}")
+    print(f"Owner ID: {owner.id}")
 
     if owner != user:
         raise HTTPException(
@@ -192,7 +193,6 @@ async def create_product_file(
     token_name = f"{secrets.token_hex(10)}.{extension}"
     generated_name = f"./static/images/{token_name}"
     file_content = await file.read()
-
     with open(generated_name, "wb") as file:
         file.write(file_content)
 
@@ -205,7 +205,7 @@ async def create_product_file(
 
     product = await Product.get(id=id)
     business = await product.business
-    owner = business.owner
+    owner = await business.owner
 
     if owner != user:
         raise HTTPException(
@@ -218,7 +218,6 @@ async def create_product_file(
     await product.save()
 
     file_url = f"localhost:9000{generated_name[1:]}"
-
     return {"status": "successful", "filename": file_url}
 
 
