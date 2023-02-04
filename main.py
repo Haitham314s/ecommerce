@@ -138,7 +138,6 @@ async def create_profile_file(
         user: user_pydantic = Depends(get_current_user)
 ):
     filename = file.filename
-    # Test.png
     extension = filename.split(".")[1]
 
     if extension not in ["png", "jpg"]:
@@ -179,10 +178,9 @@ async def create_profile_file(
 async def create_product_file(
         id: int,
         file: UploadFile = File(...),
-        user: user_pydantic = Depends
+        user: user_pydantic = Depends(get_current_user)
 ):
     filename = file.filename
-    # Test.png
     extension = filename.split(".")[1]
 
     if extension not in ["png", "jpg"]:
