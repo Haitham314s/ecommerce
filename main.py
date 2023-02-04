@@ -20,9 +20,18 @@ from fastapi.responses import HTMLResponse
 # Templates
 from fastapi.templating import Jinja2Templates
 
+# Images
+from fastapi import File, UploadFile
+import secrets
+from fastapi.staticfiles import StaticFiles
+from PIL import Image
+
 config_credentials = dotenv_values(".env")
 
 app = FastAPI()
+
+# Static file setup configuration
+app.mount("/staic", StaticFiles(directory="static"), name="static")
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -61,6 +70,7 @@ async def user_login(user: user_pydanticIn = Depends(get_current_user)):
             "joined_date": user.join_date.strftime("%b/%d/%Y")
         }
     }
+
 
 @post_save(User)
 async def create_business(
@@ -120,6 +130,95 @@ async def email_verification(request: Request, token: str):
 @app.get("/")
 async def index():
     return {"details": "Not found"}
+
+
+@app.post("/upload_file/profile")
+async def create_profile_file(
+        file: UploadFile = File(...),
+        user: user_pydantic = Depends(get_current_user)
+):
+    filename = file.filename
+    # Test.png
+    extension = filename.split(".")[1]
+
+    if extension not in ["png", "jpg"]:
+        return {"status": "error", "detail": "File extension not supported"}
+
+    token_name = f"{secrets.token_hex(10)}.{extension}"
+    generated_name = f"./static/images/{token_name}"
+    file_content = await file.read()
+
+    with open(generated_name, "wb") as file:
+        file.write(file_content)
+
+    # PILLOW
+    img = Image.open(generated_name)
+    img = img.resize(size=(200, 200))
+    img.save(generated_name)
+
+    file.close()
+
+    business = await Business.get(owner=user)
+    owner = await business.owner
+
+    if owner != user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated to perform this action",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    business.logo = token_name
+    await business.save()
+
+    file_url = f"localhost:9000{generated_name[1:]}"
+
+    return {"status": "successful", "filename": file_url}
+
+
+@app.post("/upload_file/product/{id}")
+async def create_product_file(
+        id: int,
+        file: UploadFile = File(...),
+        user: user_pydantic = Depends
+):
+    filename = file.filename
+    # Test.png
+    extension = filename.split(".")[1]
+
+    if extension not in ["png", "jpg"]:
+        return {"status": "error", "detail": "File extension not supported"}
+
+    token_name = f"{secrets.token_hex(10)}.{extension}"
+    generated_name = f"./static/images/{token_name}"
+    file_content = await file.read()
+
+    with open(generated_name, "wb") as file:
+        file.write(file_content)
+
+    # PILLOW
+    img = Image.open(generated_name)
+    img = img.resize(size=(200, 200))
+    img.save(generated_name)
+
+    file.close()
+
+    product = await Product.get(id=id)
+    business = await product.business
+    owner = business.owner
+
+    if owner != user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated to perform this action",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    product.product_image = token_name
+    await product.save()
+
+    file_url = f"localhost:9000{generated_name[1:]}"
+
+    return {"status": "successful", "filename": file_url}
 
 
 register_tortoise(
