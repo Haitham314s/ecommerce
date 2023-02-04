@@ -1,7 +1,9 @@
 import jwt
 from fastapi import FastAPI, Request, HTTPException, status, Depends
 from tortoise.contrib.fastapi import register_tortoise
-from models import *
+from models.business import *
+from models.user import *
+from models.product import *
 from dotenv import dotenv_values
 import datetime
 
@@ -264,6 +266,7 @@ async def get_product(id: int):
                 "description": business.business_description,
                 "logo": business.logo,
                 "owner_id": owner.id,
+                "business_id": business.id,
                 "owner_email": owner.email,
                 "join_date": owner.join_date.strftime("%b/%d/&Y")
             }
@@ -340,7 +343,7 @@ async def update_business(
 register_tortoise(
     app,
     db_url="sqlite://database.sqlite3",
-    modules={"models": ["models"]},
+    modules={"models": ["models.user", "models.product", "models.business"]},
     generate_schemas=True,
     add_exception_handlers=True
 )

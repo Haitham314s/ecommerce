@@ -2,7 +2,7 @@ from fastapi.exceptions import HTTPException
 from passlib.context import CryptContext
 import jwt
 from dotenv import dotenv_values
-from models import User
+from models.user import User
 from fastapi import status
 
 config_credentials = dotenv_values(".env")

@@ -1,7 +1,7 @@
 from dotenv import dotenv_values
 from pydantic import BaseModel, EmailStr
 from typing import List
-from models import User
+from models.user import User
 import jwt
 
 # using SendGrid's Python Library
