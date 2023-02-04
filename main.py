@@ -60,6 +60,8 @@ async def get_current_user(token: str = Depends(oauth2_schema)):
 @app.post("/user/me")
 async def user_login(user: user_pydanticIn = Depends(get_current_user)):
     business = await Business.get(owner=user)
+    logo = business.logo
+    logo_path = f"localhost:9000/static/images/{logo}"
 
     return {
         "status": "ok",
@@ -67,7 +69,8 @@ async def user_login(user: user_pydanticIn = Depends(get_current_user)):
             "username": user.username,
             "email": user.email,
             "verified": user.is_verified,
-            "joined_date": user.join_date.strftime("%b/%d/%Y")
+            "joined_date": user.join_date.strftime("%b/%d/%Y"),
+            "logo": logo_path
         }
     }
 
