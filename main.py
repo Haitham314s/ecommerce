@@ -303,7 +303,7 @@ async def update_product(
         update_info["percentage_discount"] = ((update_info["original_price"] - update_info["new_price"]) / update_info["original_price"]) * 100
 
         await product.update_from_dict(update_info)
-        response = await product_pydantic.from_tortoise_orm()
+        response = await product_pydantic.from_tortoise_orm(product)
         return {"status": "successful", "data": response}
 
     raise HTTPException(
