@@ -50,7 +50,9 @@ async def user_registrations(user: user_pydanticIn):
 
 
 templates = Jinja2Templates(directory="templates")
-@app.get("/verification")
+
+
+@app.get("/verification", response_class=HTMLResponse)
 async def email_verification(request: Request, token: str):
     user = await verify_token(token)
 
@@ -60,9 +62,9 @@ async def email_verification(request: Request, token: str):
         return templates.TemplateResponse(
             "verification.html",
             {
-                request: Request,
-                "user": User.username
-             })
+                "request": request,
+                "username": user.username
+            })
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

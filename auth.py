@@ -14,16 +14,15 @@ def get_hashed_password(password):
     return pwd_context.hash(password)
 
 
-def verify_token(token:str):
+async def verify_token(token: str):
     try:
-        payload = jwt.decode(token, config_credentials["SECRET"], algorithm=["HS256"])
-        user = User.get(id=payload.get("id"))
-
+        payload = jwt.decode(token, config_credentials["SECRET"], algorithms=["HS256"])
+        user = await User.get(id=payload.get("id"))
     except:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Invalid token",
-            headers={"WWW-Authenticate": "Bearer"}
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Invalid username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
     return user

@@ -10,6 +10,7 @@ class User(Model):
     username = fields.CharField(max_length=20, null=False, unique=True)
     email = fields.CharField(max_length=200, null=False, unique=True)
     password = fields.CharField(max_length=100, null=False)
+    is_verified = fields.BooleanField(default=False)
     join_date = fields.DatetimeField(default=datetime.utcnow)
 
 
@@ -45,5 +46,3 @@ business_pydanticIn = pydantic_model_creator(Business, name="Business", exclude_
 
 product_pydantic = pydantic_model_creator(Product, name="Product")
 product_pydanticIn = pydantic_model_creator(Product, name="ProductIn", exclude=("percentage_discount", "id"))
-
-

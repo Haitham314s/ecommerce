@@ -21,7 +21,7 @@ async def send_email(email: List, instance: User):
         "username": instance.username
     }
 
-    token = jwt.encode(token_data, config_credentials["SECRET"], algorithm="HS256")
+    token = jwt.encode(token_data, config_credentials["SECRET"])
 
     template = f"""
     <!DOCTYPE html>
