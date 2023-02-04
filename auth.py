@@ -1,13 +1,31 @@
+from fastapi import Depends
 from fastapi.exceptions import HTTPException
 from passlib.context import CryptContext
 import jwt
 from dotenv import dotenv_values
 from models.user import User
 from fastapi import status
+from fastapi.security import OAuth2PasswordBearer
 
 config_credentials = dotenv_values(".env")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
+
+
+async def get_current_user(token: str = Depends(oauth2_schema)):
+    try:
+        payload = jwt.decode(token, config_credentials["SECRET"], algorithms=["HS256"])
+        user = await User.get(id=payload.get("id"))
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    return await user
 
 
 def get_hashed_password(password):
