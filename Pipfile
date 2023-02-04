@@ -10,9 +10,9 @@ tortoise-orm = "*"
 pydantic = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
-fastapi-mail = "*"
 python-dotenv = "*"
 pyjwt = "*"
+sendgrid = "*"
 
 [dev-packages]
 

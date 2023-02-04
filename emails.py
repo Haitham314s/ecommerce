@@ -1,31 +1,14 @@
-from fastapi import (
-    BackgroundTasks,
-    UploadFile,
-    File,
-    Form,
-    Depends,
-    HTTPException,
-    status
-)
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from dotenv import dotenv_values
 from pydantic import BaseModel, EmailStr
 from typing import List
 from models import User
 import jwt
 
-config_credentials = dotenv_values(".env")
+# using SendGrid's Python Library
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
-conf = ConnectionConfig(
-    MAIL_USERNAME=config_credentials["EMAIL"],
-    MAIL_PASSWORD=config_credentials["PASS"],
-    MAIL_FROM=config_credentials["EMAIL"],
-    MAIL_PORT=578,
-    MAIL_SERVER="smtp",
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-    USE_CREDENTIALS=True
-)
+config_credentials = dotenv_values(".env")
 
 
 class EmailSchema(BaseModel):
@@ -54,7 +37,7 @@ async def send_email(email: List, instance: User):
             
             <p>Thanks for choosing Copy Squad, please click on the button below to verify your account.</p>
             
-            <a style="margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; font-size: 1rem; text-decoration: none; background: #0275d8; color: white;" href="http://localhost:9000/verification/?token={tokenq}">
+            <a style="margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; font-size: 1rem; text-decoration: none; background: #0275d8; color: white;" href="http://localhost:9000/verification/?token={token}">
             Verify your email
             </a>
             
@@ -65,12 +48,17 @@ async def send_email(email: List, instance: User):
     </html>
     """
 
-    message = MessageSchema(
+    message = Mail(
+        from_email="Haitham@stretch.com",
+        to_emails=email,
         subject="Copy Squad Account Verification Email",
-        recipients=email,
-        body=template,
-        subtype="html"
+        html_content=template
     )
-
-    fm = FastMail(conf)
-    await fm.send_message(message=message)
+    try:
+        sg = SendGridAPIClient(config_credentials["SENDGRID_API_KEY"])
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(e.message)
