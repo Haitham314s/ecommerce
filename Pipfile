@@ -13,6 +13,7 @@ passlib = {extras = ["bcrypt"], version = "*"}
 python-dotenv = "*"
 pyjwt = "*"
 sendgrid = "*"
+python-multipart = "*"
 
 [dev-packages]
 
