@@ -220,6 +220,73 @@ async def create_product_file(
     file_url = f"localhost:9000{generated_name[1:]}"
     return {"status": "successful", "filename": file_url}
 
+# CRUD Functionality
+@app.post("/products")
+async def add_product(
+        product: product_pydanticIn,
+        user: user_pydantic = Depends(get_current_user)
+):
+    product = product.dict(exclude_unset=True)
+
+    if product["original_price"] > 0:
+        product["percentage_discount"] = ((product["original_price"] - product["new_price"]) / product["original_price"]) * 100
+
+        product_obj = await Product.create(**product, business=user)
+        product_obj = await product_pydantic.from_tortoise_orm(product_obj)
+
+        return {"status": "successful", "data": product_obj}
+
+    return {"status": "error"}
+
+
+@app.get("/product")
+async def get_products():
+    response = await product_pydantic.from_queryset(Product.all())
+    return {"status": "successful", "data": response}
+
+
+@app.get("/product/{id}")
+async def get_product(id: int):
+    product = await Product.get(id=id)
+    business = await product.business
+    owner = await business.owner
+    response = await product_pydantic.from_queryset_single(Product.get(id=id))
+
+    return {
+        "status": "successful",
+        "data": {
+            "product_details": response,
+            "business_details": {
+                "name": business.business_name,
+                "city": business.city,
+                "region": business.region,
+                "description": business.business_description,
+                "logo": business.logo,
+                "owner_id": owner.id,
+                "owner_email": owner.email,
+                "join_date": owner.join_date.strftime("%b/%d/&Y")
+            }
+        }
+    }
+
+@app.delete("/product/{id}")
+async def delete_product(id: int, user: user_pydantic = Depends(get_current_user)):
+    product = await Product.get(id=id)
+    business = await product.business
+    owner = await business.owner
+
+    if user == owner:
+        await product.delete()
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    return {"status": "successful"}
+
 
 register_tortoise(
     app,
