@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, HTTPException, status, Depends
 from tortoise.contrib.fastapi import register_tortoise
 from models import *
 from dotenv import dotenv_values
+import datetime
 
 # Authentication
 from auth import get_hashed_password, verify_token, token_generator
@@ -304,6 +305,29 @@ async def update_product(
 
         await product.update_from_dict(update_info)
         response = await product_pydantic.from_tortoise_orm(product)
+        return {"status": "successful", "data": response}
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid password",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+
+@app.put("/business/{id}")
+async def update_business(
+        id: int, update_business: business_pydanticIn, user: user_pydantic = Depends(get_current_user)
+):
+    update_business = update_business.dict()
+
+    business = await Business.get(id=id)
+    business_owner = await business.owner
+
+    if user == business_owner:
+        await business.update_from_dict(update_business)
+        await business.save()
+        response = await business_pydantic.from_tortoise_orm(business)
+
         return {"status": "successful", "data": response}
 
     raise HTTPException(
