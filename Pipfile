@@ -16,6 +16,8 @@ sendgrid = "*"
 python-multipart = "*"
 pillow = "*"
 aiofiles = "*"
+pytest = "*"
+httpx = "*"
 
 [dev-packages]
 
