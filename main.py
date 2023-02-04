@@ -7,6 +7,7 @@ from auth import CryptContext, pwd_context, get_hashed_password, verify_token
 from tortoise.signals import post_save
 from typing import List, Optional, Type
 from tortoise import BaseDBAsyncClient
+from emails import send_email
 
 # Response classes
 from fastapi.responses import HTMLResponse
@@ -32,6 +33,7 @@ async def create_business(
         )
         await business_pydantic.from_tortoise_orm(business_obj)
         # TODO: Send the email
+        await send_email([instance.email], instance)
 
 
 @app.post("/registration")

@@ -12,7 +12,7 @@ python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 fastapi-mail = "*"
 python-dotenv = "*"
-jwt = "*"
+pyjwt = "*"
 
 [dev-packages]
 

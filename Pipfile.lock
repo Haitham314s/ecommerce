@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cbf8eb1fd720835aec778b98a5c5914fe5ec28238de35072a6c6a2c4600e91fc"
+            "sha256": "56a0c1c6502dc349847724ce305e8287979ca758242607eb512510167d0fdac3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -260,13 +260,6 @@
             "markers": "python_version >= '3.7'",
             "version": "==3.1.2"
         },
-        "jwt": {
-            "hashes": [
-                "sha256:61c9170f92e736b530655e75374681d4fcca9cfa8763ab42be57353b2b203494"
-            ],
-            "index": "pypi",
-            "version": "==1.3.1"
-        },
         "markupsafe": {
             "hashes": [
                 "sha256:0576fe974b40a400449768941d5d0858cc624e3249dfd1e0c33674e5c7ca7aed",
@@ -400,6 +393,14 @@
             ],
             "index": "pypi",
             "version": "==1.10.4"
+        },
+        "pyjwt": {
+            "hashes": [
+                "sha256:69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd",
+                "sha256:d83c3d892a77bbb74d3e1a2cfa90afaadb60945205d1095d9221f04466f64c14"
+            ],
+            "index": "pypi",
+            "version": "==2.6.0"
         },
         "pypika-tortoise": {
             "hashes": [

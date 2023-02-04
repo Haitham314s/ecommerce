@@ -15,7 +15,7 @@ class User(Model):
 
 class Business(Model):
     id = fields.IntField(pk=True, index=True)
-    business_name = fields.CharField(max_length=20, null = False, unique = True)
+    business_name = fields.CharField(max_length=20, null=False, unique=True)
     city = fields.CharField(max_length=100, null=False, default="Unspecified")
     region = fields.CharField(max_length=100, null=False, default="Unspecified")
     business_description = fields.TextField(null=True)

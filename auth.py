@@ -2,7 +2,7 @@ from fastapi.exceptions import HTTPException
 from passlib.context import CryptContext
 import jwt
 from dotenv import dotenv_values
-from .models import User
+from models import User
 from fastapi import status
 
 
@@ -16,8 +16,8 @@ def get_hashed_password(password):
 
 def verify_token(token:str):
     try:
-        payload = jwt.decode(token, config_credentials["SECRET"])
-        user = await User.get(id=payload.get("id"))
+        payload = jwt.decode(token, config_credentials["SECRET"], algorithm=["HS256"])
+        user = User.get(id=payload.get("id"))
 
     except:
         raise HTTPException(
