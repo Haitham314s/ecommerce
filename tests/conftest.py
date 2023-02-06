@@ -1,12 +1,10 @@
 import pytest
-import asyncio
-import os
 from tortoise import Tortoise, run_async
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.testclient import TestClient
 
-from auth import get_hashed_password, verify_password, token_generator
+from auth import get_hashed_password, verify_password, token_generator, oauth2_schema
 from models.user import User, user_pydantic, user_pydanticIn
 from main import app
 

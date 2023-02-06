@@ -1,11 +1,9 @@
 from fastapi import HTTPException, status, Depends
-from models.user import *
-from models.product import *
+from models import user_pydantic, Product, product_pydanticIn, product_pydantic
 from dotenv import dotenv_values
 import datetime
 from auth import get_current_user
-from fastapi.security import OAuth2PasswordBearer
-# Images
+
 from fastapi import File, UploadFile, APIRouter
 import secrets
 from fastapi.staticfiles import StaticFiles
@@ -18,7 +16,6 @@ router = APIRouter(
     tags=["Product"]
 )
 
-# Static file setup configuration
 router.mount("/static", StaticFiles(directory="static"), name="static")
 
 

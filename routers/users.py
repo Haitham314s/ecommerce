@@ -1,16 +1,15 @@
 import jwt
 from fastapi import Request, HTTPException, status, Depends
-from models.business import *
-from models.user import *
+from models import User, user_pydanticIn, user_pydantic, Business
 from dotenv import dotenv_values
-# Authentication
-from auth import get_hashed_password, verify_token, token_generator, get_current_user
+
+from auth import get_hashed_password, verify_token, token_generator
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-# Response classes
+
 from fastapi.responses import HTMLResponse
-# Templates
+
 from fastapi.templating import Jinja2Templates
-# Images
+
 from fastapi import File, UploadFile, APIRouter
 import secrets
 from fastapi.staticfiles import StaticFiles

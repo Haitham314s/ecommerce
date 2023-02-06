@@ -1,17 +1,14 @@
 from fastapi import HTTPException, status, Depends
-from models.business import *
-from models.user import *
+from models import user_pydanticIn, Business, User, business_pydantic, user_pydantic, business_pydanticIn
 from dotenv import dotenv_values
-from fastapi.security import OAuth2PasswordBearer
 from auth import get_current_user
-# Signals
+
 from tortoise.signals import post_save
 from typing import List, Optional, Type
 from tortoise import BaseDBAsyncClient
 from emails import send_email
-# Images
+
 from fastapi import APIRouter
-from fastapi.staticfiles import StaticFiles
 
 config_credentials = dotenv_values(".env")
 
@@ -54,7 +51,6 @@ async def create_business(
         )
         await business_pydantic.from_tortoise_orm(business_obj)
 
-        # Send the email verification
         await send_email([instance.email], instance)
 
 
