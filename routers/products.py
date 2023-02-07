@@ -1,12 +1,14 @@
-from fastapi import HTTPException, status, Depends
 from models import user_pydantic, Product, product_pydanticIn, product_pydantic
 from dotenv import dotenv_values
 import datetime
 from auth import get_current_user
 
-from fastapi import File, UploadFile, APIRouter
+from fastapi import File, UploadFile, APIRouter, HTTPException, status, Depends
+from starlette.applications import Starlette
+from starlette.staticfiles import StaticFiles
+from starlette.routing import Mount
+
 import secrets
-from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
 config_credentials = dotenv_values(".env")
@@ -16,7 +18,9 @@ router = APIRouter(
     tags=["Product"]
 )
 
-router.mount("/static", StaticFiles(directory="static"), name="static")
+app = Starlette(routes=[
+    Mount('/static', StaticFiles(directory='static'))
+])
 
 
 @router.post("/upload_file/product/{id}")
@@ -108,7 +112,7 @@ async def get_product(id: int):
                 "owner_id": owner.id,
                 "business_id": business.id,
                 "owner_email": owner.email,
-                "join_date": owner.join_date.strftime("%b/%d/&Y")
+                "join_date": owner.join_date.strftime("%d %b &Y")
             }
         }
     }

@@ -1,17 +1,17 @@
-from fastapi import Depends
+from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
+from fastapi.security import OAuth2PasswordBearer
+
 from passlib.context import CryptContext
 import jwt
 from dotenv import dotenv_values
-from models.user import User
-from fastapi import status
-from fastapi.security import OAuth2PasswordBearer
+from models import User
 
 config_credentials = dotenv_values(".env")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="users/token")
 
 
 async def get_current_user(token: str = Depends(oauth2_schema)):
@@ -53,7 +53,7 @@ async def verify_password(plain_password, hashed_password):
 async def authenticate_user(username, password):
     user = await User.get(username=username)
 
-    return user if user and verify_password(password, user.password) else False
+    return user if user and await verify_password(password, user.password) else False
 
 
 async def token_generator(username: str, password: str):

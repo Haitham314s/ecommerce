@@ -1,10 +1,9 @@
 from dotenv import dotenv_values
 from pydantic import BaseModel, EmailStr
 from typing import List
-from models.user import User
+from models import User
 import jwt
 
-# using SendGrid's Python Library
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -37,7 +36,7 @@ async def send_email(email: List, instance: User):
             
             <p>Thanks for choosing Copy Squad, please click on the button below to verify your account.</p>
             
-            <a style="margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; font-size: 1rem; text-decoration: none; background: #0275d8; color: white;" href="http://localhost:9000/verification/?token={token}">
+            <a style="margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; font-size: 1rem; text-decoration: none; background: #0275d8; color: white;" href="http://localhost:9000/users/verification/?token={token}">
             Verify your email
             </a>
             

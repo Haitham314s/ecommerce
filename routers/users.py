@@ -1,18 +1,18 @@
 import jwt
-from fastapi import Request, HTTPException, status, Depends
 from models import User, user_pydanticIn, user_pydantic, Business
 from dotenv import dotenv_values
 
 from auth import get_hashed_password, verify_token, token_generator
+
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
 from fastapi.responses import HTMLResponse
-
 from fastapi.templating import Jinja2Templates
+from fastapi import File, UploadFile, APIRouter, Request, HTTPException, status, Depends
+from starlette.applications import Starlette
+from starlette.staticfiles import StaticFiles
+from starlette.routing import Mount
 
-from fastapi import File, UploadFile, APIRouter
 import secrets
-from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
 config_credentials = dotenv_values(".env")
@@ -22,10 +22,12 @@ router = APIRouter(
     tags=["User"]
 )
 
-# Static file setup configuration
-router.mount("/static", StaticFiles(directory="static"), name="static")
+app = Starlette(routes=[
+    Mount('/static', StaticFiles(directory='static'))
+])
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
+
 
 @router.post("/token")
 async def generate_token(request_form: OAuth2PasswordRequestForm = Depends()):

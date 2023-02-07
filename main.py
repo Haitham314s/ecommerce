@@ -1,12 +1,7 @@
-import jwt
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
-from models.business import *
-from models.user import *
-from models.product import *
 from dotenv import dotenv_values
 from routers import businesses, users, products
-# Authentication
 
 config_credentials = dotenv_values(".env")
 
@@ -16,6 +11,8 @@ app.include_router(users.router)
 app.include_router(products.router)
 app.include_router(businesses.router)
 
+app.mount('/users', users.app)
+app.mount('/products', products.app)
 
 @app.get("/")
 async def index():

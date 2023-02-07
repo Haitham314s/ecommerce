@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, APIRouter
 from models import user_pydanticIn, Business, User, business_pydantic, user_pydantic, business_pydanticIn
 from dotenv import dotenv_values
 from auth import get_current_user
@@ -8,7 +8,6 @@ from typing import List, Optional, Type
 from tortoise import BaseDBAsyncClient
 from emails import send_email
 
-from fastapi import APIRouter
 
 config_credentials = dotenv_values(".env")
 
