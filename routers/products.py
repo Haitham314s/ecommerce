@@ -36,12 +36,11 @@ async def create_product_file(
         return {"status": "error", "detail": "File extension not supported"}
 
     token_name = f"{secrets.token_hex(10)}.{extension}"
-    generated_name = f"./static/images/{token_name}"
+    generated_name = f"./products/static/images/{token_name}"
     file_content = await file.read()
     with open(generated_name, "wb") as file:
         file.write(file_content)
 
-    # PILLOW
     img = Image.open(generated_name)
     img = img.resize(size=(200, 200))
     img.save(generated_name)

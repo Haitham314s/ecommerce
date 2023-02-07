@@ -21,7 +21,7 @@ router = APIRouter(
 async def user_login(user: user_pydanticIn = Depends(get_current_user)):
     business = await Business.get(owner=user)
     logo = business.logo
-    logo_path = f"localhost:9000/static/images/{logo}"
+    logo_path = f"localhost:9000/users/static/images/{logo}"
 
     return {
         "status": "ok",
