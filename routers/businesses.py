@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status, Depends, APIRouter
-from models import user_pydanticIn, Business, User, business_pydantic, user_pydantic, business_pydanticIn
+from models import user_in, Business, User, business_model, user_model, business_in
 from dotenv import dotenv_values
 from auth import get_current_user
 
@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.post("/user/me")
-async def user_login(user: user_pydanticIn = Depends(get_current_user)):
+async def user_login(user: user_in = Depends(get_current_user)):
     business = await Business.get(owner=user)
     logo = business.logo
     logo_path = f"localhost:9000/users/static/images/{logo}"
@@ -48,14 +48,14 @@ async def create_business(
             business_name=instance.username,
             owner=instance
         )
-        await business_pydantic.from_tortoise_orm(business_obj)
+        await business_model.from_tortoise_orm(business_obj)
 
         await send_email([instance.email], instance)
 
 
 @router.put("/business/{id}")
 async def update_business(
-        id: int, update_business: business_pydanticIn, user: user_pydantic = Depends(get_current_user)
+        id: int, update_business: business_in, user: user_model = Depends(get_current_user)
 ):
     update_business = update_business.dict()
 
@@ -65,7 +65,7 @@ async def update_business(
     if user == business_owner:
         await business.update_from_dict(update_business)
         await business.save()
-        response = await business_pydantic.from_tortoise_orm(business)
+        response = await business_model.from_tortoise_orm(business)
 
         return {"status": "successful", "data": response}
 

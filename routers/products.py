@@ -1,4 +1,4 @@
-from models import user_pydantic, Product, product_pydanticIn, product_pydantic
+from models import user_model, Product, product_in, product_model
 from dotenv import dotenv_values
 import datetime
 from auth import get_current_user
@@ -27,7 +27,7 @@ app = Starlette(routes=[
 async def create_product_file(
         id: int,
         file: UploadFile = File(...),
-        user: user_pydantic = Depends(get_current_user)
+        user: user_model = Depends(get_current_user)
 ):
     filename = file.filename
     extension = filename.split(".")[1]
@@ -68,8 +68,8 @@ async def create_product_file(
 # CRUD Functionality
 @router.post("/products")
 async def add_product(
-        product: product_pydanticIn,
-        user: user_pydantic = Depends(get_current_user)
+        product: product_in,
+        user: user_model = Depends(get_current_user)
 ):
     product = product.dict(exclude_unset=True)
 
@@ -78,7 +78,7 @@ async def add_product(
             "original_price"]) * 100
 
         product_obj = await Product.create(**product, business=user)
-        product_obj = await product_pydantic.from_tortoise_orm(product_obj)
+        product_obj = await product_model.from_tortoise_orm(product_obj)
 
         return {"status": "successful", "data": product_obj}
 
@@ -87,7 +87,7 @@ async def add_product(
 
 @router.get("/product")
 async def get_products():
-    response = await product_pydantic.from_queryset(Product.all())
+    response = await product_model.from_queryset(Product.all())
     return {"status": "successful", "data": response}
 
 
@@ -96,7 +96,7 @@ async def get_product(id: int):
     product = await Product.get(id=id)
     business = await product.business
     owner = await business.owner
-    response = await product_pydantic.from_queryset_single(Product.get(id=id))
+    response = await product_model.from_queryset_single(Product.get(id=id))
 
     return {
         "status": "successful",
@@ -118,7 +118,7 @@ async def get_product(id: int):
 
 
 @router.delete("/product/{id}")
-async def delete_product(id: int, user: user_pydantic = Depends(get_current_user)):
+async def delete_product(id: int, user: user_model = Depends(get_current_user)):
     product = await Product.get(id=id)
     business = await product.business
     owner = await business.owner
@@ -138,7 +138,7 @@ async def delete_product(id: int, user: user_pydantic = Depends(get_current_user
 
 @router.put("/product/{id}")
 async def update_product(
-        id: int, update_info: product_pydanticIn, user: user_pydantic = Depends(get_current_user)
+        id: int, update_info: product_in, user: user_model = Depends(get_current_user)
 ):
     product = await Product.get(id=id)
     business = await product.business
@@ -152,7 +152,7 @@ async def update_product(
             "original_price"]) * 100
 
         await product.update_from_dict(update_info)
-        response = await product_pydantic.from_tortoise_orm(product)
+        response = await product_model.from_tortoise_orm(product)
         return {"status": "successful", "data": response}
 
     raise HTTPException(

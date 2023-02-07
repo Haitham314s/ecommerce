@@ -1,5 +1,5 @@
 import jwt
-from models import User, user_pydanticIn, user_pydantic, Business
+from models import User, user_in, user_model, Business
 from dotenv import dotenv_values
 
 from auth import get_hashed_password, verify_token, token_generator
@@ -50,11 +50,11 @@ async def get_current_user(token: str = Depends(oauth2_schema)):
 
 
 @router.post("/registration")
-async def user_registrations(user: user_pydanticIn):
+async def user_registrations(user: user_in):
     user_info = user.dict(exclude_unset=True)
     user_info["password"] = get_hashed_password(user_info["password"])
     user_obj = await User.create(**user_info)
-    new_user = await user_pydantic.from_tortoise_orm(user_obj)
+    new_user = await user_model.from_tortoise_orm(user_obj)
     return {
         "status": "ok",
         "data": f"Hello {new_user.username}, thanks for choosing our services. Please check your email inbox and "
@@ -89,7 +89,7 @@ async def email_verification(request: Request, token: str):
 @router.post("/upload_file/profile")
 async def create_profile_file(
         file: UploadFile = File(...),
-        user: user_pydantic = Depends(get_current_user)
+        user: user_model = Depends(get_current_user)
 ):
     filename = file.filename
     extension = filename.split(".")[1]

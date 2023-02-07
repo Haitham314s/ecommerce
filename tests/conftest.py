@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException
 from fastapi.testclient import TestClient
 
 from auth import get_hashed_password, verify_password, token_generator
-from models.user import User, user_pydantic, user_pydanticIn
+from models.user import User, user_model, user_in
 from main import app
 
 SECRET_KEY = "your-secret-key"
@@ -31,18 +31,18 @@ async def clear_db():
         adapter.drop_all_tables()
 
 
-async def user_registrations(user: user_pydanticIn):
+async def user_registrations(user: user_in):
     user_info = user.dict(exclude_unset=True)
     user_info["password"] = get_hashed_password(user_info["password"])
     user_obj = await User.create(**user_info)
-    new_user = await user_pydantic.from_tortoise_orm(user_obj)
+    new_user = await user_model.from_tortoise_orm(user_obj)
     return {
         "status": "ok",
         "user": new_user
     }
 
 
-async def user_login(user: user_pydanticIn):
+async def user_login(user: user_in):
     user_info = user.dict(exclude_unset=True)
     stored_user = await User.get(email=user_info["email"])
     if not stored_user:
