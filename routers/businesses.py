@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.post("/user/me")
+@router.post("/login")
 async def user_login(user: user_in = Depends(get_current_user)):
     business = await Business.get(owner=user)
     logo = business.logo
@@ -53,17 +53,28 @@ async def create_business(
         await send_email([instance.email], instance)
 
 
+@router.get("/business")
+async def get_businesses():
+    response = await business_model.from_queryset(Business.all())
+    return {"status": "Successful", "data": response}
+
+
+@router.get("/business/{id}")
+async def get_business(id: int):
+    response = await business_model.from_queryset_single(Business.get(id=id))
+    return {"status": "Successful", "data": response}
+
 @router.put("/business/{id}")
 async def update_business(
-        id: int, update_business: business_in, user: user_model = Depends(get_current_user)
+        id: int, business_obj: business_in, user: user_model = Depends(get_current_user)
 ):
-    update_business = update_business.dict()
+    business_obj = business_obj.dict()
 
     business = await Business.get(id=id)
     business_owner = await business.owner
 
     if user == business_owner:
-        await business.update_from_dict(update_business)
+        await business.update_from_dict(business_obj)
         await business.save()
         response = await business_model.from_tortoise_orm(business)
 

@@ -5,6 +5,8 @@ from tortoise.contrib.pydantic import pydantic_model_creator
 class Business(Model):
     id = fields.IntField(pk=True, index=True)
     business_name = fields.CharField(max_length=20, null=False, unique=True, index=True)
+    business_email = fields.CharField(max_length=100, null=True)
+    business_phone = fields.CharField(max_length=15, null=True)
     city = fields.CharField(max_length=100, null=False, default="Unspecified", index=True)
     region = fields.CharField(max_length=100, null=False, default="Unspecified", index=True)
     business_description = fields.TextField(null=True)

@@ -76,6 +76,7 @@ async def add_product(
     if product["original_price"] > 0:
         product["percentage_discount"] = ((product["original_price"] - product["new_price"]) / product[
             "original_price"]) * 100
+        product["revenue"] += product["quantity_sold"] * product["original_price"]
 
         product_obj = await Product.create(**product, business=user)
         product_obj = await product_model.from_tortoise_orm(product_obj)
