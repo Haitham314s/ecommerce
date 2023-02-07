@@ -16,10 +16,10 @@ sendgrid = "*"
 python-multipart = "*"
 pillow = "*"
 aiofiles = "*"
-pytest = "*"
-httpx = "*"
 
 [dev-packages]
+pytest = "*"
+httpx = "*"
 
 [requires]
 python_version = "3.11"
