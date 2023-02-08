@@ -9,8 +9,6 @@ from tortoise import BaseDBAsyncClient
 from emails import send_email
 
 
-config_credentials = dotenv_values(".env")
-
 router = APIRouter(
     prefix="/businesses",
     tags=["Business"]
@@ -29,7 +27,7 @@ async def user_login(user: user_in = Depends(get_current_user)):
             "username": user.username,
             "email": user.email,
             "verified": user.is_verified,
-            "joined_date": user.join_date.strftime("%b/%d/%Y"),
+            "joined_date": user.join_date.strftime("%d/%m/%Y"),
             "logo": logo_path
         }
     }

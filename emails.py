@@ -6,8 +6,7 @@ import jwt
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-
-config_credentials = dotenv_values(".env")
+from config import settings
 
 
 class EmailSchema(BaseModel):
@@ -20,7 +19,7 @@ async def send_email(email: List, instance: User):
         "username": instance.username
     }
 
-    token = jwt.encode(token_data, config_credentials["SECRET"])
+    token = jwt.encode(token_data, settings.secret)
 
     template = f"""
     <!DOCTYPE html>
@@ -54,7 +53,7 @@ async def send_email(email: List, instance: User):
         html_content=template
     )
     try:
-        sg = SendGridAPIClient(config_credentials["SENDGRID_API_KEY"])
+        sg = SendGridAPIClient(settings.sendgrid_api_key)
         response = sg.send(message)
         print(response.status_code)
         print(response.body)

@@ -1,5 +1,4 @@
 from models import user_model, Product, product_in, product_model
-from dotenv import dotenv_values
 import datetime
 from auth import get_current_user
 
@@ -11,7 +10,6 @@ from starlette.routing import Mount
 import secrets
 from PIL import Image
 
-config_credentials = dotenv_values(".env")
 
 router = APIRouter(
     prefix="/products",
@@ -112,7 +110,7 @@ async def get_product(id: int):
                 "owner_id": owner.id,
                 "business_id": business.id,
                 "owner_email": owner.email,
-                "join_date": owner.join_date.strftime("%d %b &Y")
+                "join_date": owner.join_date.strftime("%d/%m/&Y")
             }
         }
     }

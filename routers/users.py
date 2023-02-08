@@ -14,8 +14,7 @@ from starlette.routing import Mount
 
 import secrets
 from PIL import Image
-
-config_credentials = dotenv_values(".env")
+from config import settings
 
 router = APIRouter(
     prefix="/users",
@@ -37,7 +36,7 @@ async def generate_token(request_form: OAuth2PasswordRequestForm = Depends()):
 
 async def get_current_user(token: str = Depends(oauth2_schema)):
     try:
-        payload = jwt.decode(token, config_credentials["SECRET"], algorithms=["HS256"])
+        payload = jwt.decode(token, settings.secret, algorithms=["HS256"])
         user = await User.get(id=payload.get("id"))
     except:
         raise HTTPException(
