@@ -10,7 +10,6 @@ from starlette.routing import Mount
 import secrets
 from PIL import Image
 
-
 router = APIRouter(
     prefix="/products",
     tags=["Product"]
