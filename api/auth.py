@@ -4,7 +4,6 @@ from fastapi.security import OAuth2PasswordBearer
 
 from passlib.context import CryptContext
 import jwt
-from dotenv import dotenv_values
 from models import User
 from config import settings
 

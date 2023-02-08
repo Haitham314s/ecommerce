@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status, Depends, APIRouter
 from models import user_in, Business, User, business_model, user_model, business_in
-from dotenv import dotenv_values
 from auth import get_current_user
 
 from tortoise.signals import post_save

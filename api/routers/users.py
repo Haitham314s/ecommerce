@@ -1,6 +1,5 @@
 import jwt
 from models import User, user_in, user_model, Business
-from dotenv import dotenv_values
 
 from auth import get_hashed_password, verify_token, token_generator
 

@@ -4,9 +4,9 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.testclient import TestClient
 
-from auth import get_hashed_password, verify_password, token_generator
-from models.user import User, user_model, user_in
-from main import app
+from api.auth import get_hashed_password, verify_password, token_generator
+from api.models.user import User, user_model, user_in
+from api.main import app
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"

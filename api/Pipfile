@@ -14,7 +14,8 @@ sendgrid = "*"
 python-multipart = "*"
 pillow = "*"
 aiofiles = "*"
-pydantic = {extras = ["dotenv"], version = "*"}
+pydantic = {extras = ["email"], version = "*"}
+jinja2 = "*"
 
 [dev-packages]
 pytest = "*"
